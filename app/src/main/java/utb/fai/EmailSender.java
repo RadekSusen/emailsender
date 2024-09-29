@@ -14,43 +14,41 @@ public class EmailSender {
         output = socket.getOutputStream();
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        readResponse(); // Čtení úvodní odpovědi serveru
+        readResponse(); 
     }
 
     public void send(String from, String to, String subject, String text) throws IOException {
         if (from == null || to == null || subject == null || text == null) {
-            throw new IllegalArgumentException("Email details cannot be null");
+            throw new IllegalArgumentException("Emailové informace nesmí zůstat prázdné");
         }
 
-        String lineEditing = "\r\n";
-
         // Odeslání příkazu EHLO
-        writeCommand("EHLO localhost" + lineEditing);
+        writeCommand("EHLO localhost" + "\r\n");
         readResponse();
 
         // Odeslání příkazu MAIL FROM
-        writeCommand("MAIL FROM:<" + from + ">" + lineEditing);
+        writeCommand("MAIL FROM:<" + from + ">" + "\r\n");
         readResponse();
 
         // Odeslání příkazu RCPT TO
-        writeCommand("RCPT TO:<" + to + ">" + lineEditing);
+        writeCommand("RCPT TO:<" + to + ">" + "\r\n");
         readResponse();
 
         // Odeslání příkazu DATA
-        writeCommand("DATA" + lineEditing);
+        writeCommand("DATA" + "\r\n");
         readResponse();
 
         // Odeslání obsahu emailu
-        writeCommand("Subject: " + subject + lineEditing);
-        writeCommand("From: " + from + lineEditing);
-        writeCommand("To: " + to + lineEditing);
-        writeCommand(lineEditing); 
+        writeCommand("Subject: " + subject + "\r\n");
+        writeCommand("From: " + from + "\r\n");
+        writeCommand("To: " + to + "\r\n");
+        writeCommand("\r\n"); 
 
         // Tělo zprávy
-        writeCommand(text + lineEditing);
+        writeCommand(text + "\r\n");
         
         // Ukončení těla zprávy
-        writeCommand("." + lineEditing);
+        writeCommand("." + "\r\n");
         readResponse();
     }
 
