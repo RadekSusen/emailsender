@@ -16,21 +16,12 @@ public class App {
         String subject = args[4];  // Předmět emailu
         String content = args[5];  // Obsah emailu
 
-        // Tvůj blok kódu s pevnými hodnotami
-        try {
-            EmailSender sender = new EmailSender("smtp.utb.cz", 25);
-            sender.send("you@utb.cz", "you@utb.cz", "Email from Java", "Funguje to?\nSnad...");
-            sender.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Kód s použitím argumentů z příkazové řádky
         try {
             EmailSender sender = new EmailSender(smtpServer, port);
             sender.send(from, to, subject, content);
-            sender.close();  // Zavření spojení
             System.out.println("Email byl úspěšně odeslán.");
+            sender.close();  // Zavření spojení
         } catch (Exception e) {
             e.printStackTrace();
         }
