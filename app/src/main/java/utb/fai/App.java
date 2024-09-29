@@ -1,10 +1,10 @@
 package utb.fai;
 
-public class Main {
+public class App {
     public static void main(String[] args) {
         // Ověření počtu argumentů
         if (args.length != 6) {
-            System.out.println("Použití: java Main <SMTP server> <Port> <Odesílatel> <Příjemce> <Předmět> <Obsah>");
+            System.out.println("Email nelze odeslat.");
             return;
         }
 
