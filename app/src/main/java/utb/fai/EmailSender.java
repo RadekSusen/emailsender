@@ -1,117 +1,54 @@
 package utb.fai;
 
-import java.net.*;
 import java.io.*;
+import java.net.*;
 
 public class EmailSender {
-    private Socket socket;
-    private InputStream input;
-    private OutputStream output;
-    private byte[] response = new byte[1024];
-    private int len;
 
-    /*
-     * Konstruktor otevře spojení se zadaným SMTP serverem na daném portu.
-     */
+    private Socket socket;
+    private PrintWriter writer;
+    private BufferedReader reader;
+
     public EmailSender(String host, int port) throws IOException {
         socket = new Socket(host, port);
-        input = socket.getInputStream();
-        output = socket.getOutputStream();
+        writer = new PrintWriter(socket.getOutputStream(), true);
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        waitForResponse(); // Čekáme na první odpověď serveru
+    }
 
-        // Přečtení uvítací zprávy serveru
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
+    public void send(String from, String to, String subject, String messageBody) throws IOException {
+        if (from == null || to == null || subject == null || messageBody == null) {
+            throw new IllegalArgumentException("Parameters cannot be null");
+        }
+
+        // Odesíláme jednotlivé příkazy SMTP
+        sendCommand("EHLO localhost");
+        sendCommand("MAIL FROM:<" + from + ">");
+        sendCommand("RCPT TO:<" + to + ">");
+        sendCommand("DATA");
+        writer.println("Subject: " + subject);
+        writer.println(messageBody);
+        writer.println(".");
+        writer.flush();
+        waitForResponse();
+    }
+
+    private void sendCommand(String command) throws IOException {
+        writer.println(command);
+        writer.flush();
+        waitForResponse();
+    }
+
+    private void waitForResponse() throws IOException {
+        String response = reader.readLine();
+        if (response == null || !(response.startsWith("2") || response.startsWith("3"))) {
+            throw new IOException("Server returned an error: " + response);
         }
     }
 
-    /*
-     * Metoda send() odesílá emailovou zprávu z určeného emailu na zadaný email
-     * příjemce s daným předmětem a textem.
-     */
-    public void send(String from, String to, String subject, String text) throws IOException, InterruptedException {
-        String message;
-        byte[] buffer;
-
-        // Odeslání EHLO příkazu
-        message = "EHLO " + from + "\r\n";
-        buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Čeká na odpověď
-        Thread.sleep(500);
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
-        }
-
-        // Odeslání MAIL FROM příkazu
-        message = "MAIL FROM:<" + from + ">\r\n";
-        buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Čeká na odpověď
-        Thread.sleep(500);
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
-        }
-
-        // Odeslání RCPT TO příkazu
-        message = "RCPT TO:<" + to + ">\r\n";
-        buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Čeká na odpověď
-        Thread.sleep(500);
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
-        }
-
-        // Odeslání DATA příkazu
-        message = "DATA\r\n";
-        buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Čeká na odpověď
-        Thread.sleep(500);
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
-        }
-
-        // Odeslání těla emailu (předmět a obsah)
-        message = "Subject: " + subject + "\r\n\r\n" + text + "\r\n.\r\n";
-        buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Čeká na odpověď
-        Thread.sleep(500);
-        if (input.available() > 0) {
-            len = input.read(response);
-            System.out.write(response, 0, len);
-        }
-    }
-
-    /*
-     * Metoda close() odesílá příkaz QUIT na SMTP server a zavírá spojení.
-     */
     public void close() throws IOException {
-        // Odeslání QUIT příkazu
-        String message = "QUIT\r\n";
-        byte[] buffer = message.getBytes();
-        output.write(buffer);
-        output.flush();
-
-        // Zavře socket a streamy
-        input.close();
-        output.close();
+        sendCommand("QUIT");
         socket.close();
+        reader.close();
     }
 }
