@@ -35,7 +35,7 @@ public class EmailSender {
     /*
      * Sends QUIT and closes the socket
      */
-    public void close() {
+    public void close()  throws IOException{
         out.write("QUIT\r\n".getBytes());
 		
 		InputStream inp = s.getInputStream();
