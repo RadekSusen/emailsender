@@ -9,6 +9,9 @@ public class EmailSender {
      * during opening,
      * the exception is not handled in the constructor.
      */
+	Socket s;
+	OutputStream out;
+	
     public EmailSender(String host, int port) throws UnknownHostException, IOException {
         s = new Socket("smtp.utb.cz", 25);
 		out = s.getOutputStream();
