@@ -23,8 +23,8 @@ public class EmailSender {
      * If the Socket throws an exception during sending, the exception is not
      * handled by this method.
      */
-    public void send(String from, String to, String subject, String text) throws IOException {
-                out.write((+from+to+subject+text).getBytes());
+    public void send(String from, String recipient, String subject, String text) throws IOException {
+                out.write((from+recipient+subject+text).getBytes());
     }
 
     /*
