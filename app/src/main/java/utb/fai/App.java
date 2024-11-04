@@ -10,11 +10,20 @@ public class App {
 
     public static void main(String[] args) {
         // TODO: Implement input parameter processing
+
+        String smtpServer = args[0];
+        int smtpPort = Integer.parseInt(args[1]);
+        String senderEmail = args[2];
+        String recipientEmail = args[3];
+        String emailSubject = args[4];
+        String emailMessage = args[5];
+        
         System.out.println("Sending email...");
         try {
-            EmailSender sender = new EmailSender("smtp.utb.cz", 25);
-            sender.send("r_susen@utb.cz", "r_susen@utb.cz", "Email from Java", "Funguje to?\nSnad...");
+            EmailSender sender = new EmailSender(smtpServer, smtpPort);
+            sender.send(senderEmail, recipientEmail, emailSubject, emailMessage);
             sender.close();
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
