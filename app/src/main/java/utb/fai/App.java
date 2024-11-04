@@ -12,7 +12,7 @@ public class App {
         // TODO: Implement input parameter processing
 
         String smtpServer = args[0];
-        int smtpPort = Integer.parseInt(args[1]);
+        int smtpPort = args[1];
         String senderEmail = args[2];
         String recipientEmail = args[3];
         String emailSubject = args[4];
