@@ -24,12 +24,7 @@ public class EmailSender {
      * handled by this method.
      */
     public void send(String from, String to, String subject, String text) throws IOException {
-                out.write(("HELO pc4-54-304\r\n"
-				+ "MAIL FROM: "+from+"\r\n"
-				+ "RCPT TO: "+to+"\r\n"
-				+ "DATA\r\n"
-				+ "Subject: "+subject+"\r\n"
-				+ text+"\r\n.\r\n").getBytes());
+                out.write((+from+to+subject+text).getBytes());
     }
 
     /*
