@@ -13,7 +13,7 @@ public class EmailSender {
 	OutputStream out;
 	
     public EmailSender(String host, int port) throws UnknownHostException, IOException {
-        s = new Socket("smtp.utb.cz", 25);
+        s = new Socket(host, port);
 		out = s.getOutputStream();
     }
 
